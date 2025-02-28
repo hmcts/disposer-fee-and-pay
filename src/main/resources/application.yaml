@@ -1,19 +1,6 @@
-server:
-  port: 4550
-  shutdown: "graceful"
-
-# If you use a database then uncomment the `group:, readiness: and include: "db"` lines in the health probes and uncomment the datasource section
-management:
-  endpoint:
-    health:
-      show-details: "always"
-  endpoints:
-    web:
-      base-path: /
-      exposure:
-        include: health, info, prometheus
-
 spring:
+  main:
+    web-application-type: none
   config:
     import: "optional:configtree:/mnt/secrets/disposer/"
   application:
@@ -22,3 +9,6 @@ spring:
 azure:
   application-insights:
     instrumentation-key: ${disposer.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+
+service:
+  enabled: ${DISPOSER_FEE_PAY_ENABLED:false}
