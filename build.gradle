@@ -117,8 +117,8 @@ project.tasks['check'].dependsOn integration
 
 sonarqube {
   properties {
-    property "sonar.projectName", "Reform :: spring-boot-template"
-    property "sonar.projectKey", "uk.gov.hmcts.reform:spring-boot-template"
+    property "sonar.projectName", "Reform :: disposer-fee-and-pay"
+    property "sonar.projectKey", "uk.gov.hmcts.reform:disposer-fee-and-pay"
   }
 }
 
@@ -145,26 +145,23 @@ repositories {
   maven { url 'https://jitpack.io' }
 }
 
-ext {
-  log4JVersion = "2.24.3"
-  logbackVersion = "1.5.14"
-}
-
-ext['snakeyaml.version'] = '2.0'
+def versions = [
+  log4J    : '2.24.3',
+  logback  : '1.5.14'
+]
 
 dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.5'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.8'
 
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
-  implementation group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
-  implementation group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: versions.log4J
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: versions.log4J
+  implementation group: 'ch.qos.logback', name: 'logback-classic', version: versions.logback
+  implementation group: 'ch.qos.logback', name: 'logback-core', version: versions.logback
 
   implementation group: 'io.rest-assured', name: 'rest-assured'
 
@@ -176,10 +173,12 @@ dependencies {
   }
 }
 
-mainClassName = 'uk.gov.hmcts.reform.demo.Application'
+application {
+  mainClass = 'uk.gov.hmcts.reform.disposer.Application'
+}
 
 bootJar {
-  archiveFileName = "spring-boot-template.jar"
+  archiveFileName = "disposer-fee-and-pay.jar"
 
   manifest {
     attributes('Implementation-Version': project.version.toString())
