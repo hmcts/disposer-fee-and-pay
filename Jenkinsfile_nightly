@@ -11,4 +11,8 @@ def type = "java"
 def product = "disposer"
 def component = "fee-and-pay"
 
-withNightlyPipeline(type, product, component) {}
+withNightlyPipeline(type, product, component) {
+  enableAksStagingDeployment()
+  disableLegacyDeployment()
+  nonServiceApp()
+}

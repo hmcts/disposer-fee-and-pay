@@ -5,7 +5,7 @@ name: disposer-fee-and-pay
 home: https://github.com/hmcts/disposer-fee-and-pay
 version: 0.0.18
 maintainers:
-  - name: HMCTS disposer team
+  - name: HMCTS Retain and Dispose team
 dependencies:
   - name: job
     version: 2.2.0
