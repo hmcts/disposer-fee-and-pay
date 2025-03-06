@@ -8,6 +8,7 @@ def component = "fee-and-pay"
 def branchesToSync = ['demo','perftest','ithc']
 
 withPipeline(type, product, component) {
+  enableSlackNotifications("#disposer-builds")
   enableAksStagingDeployment()
   disableLegacyDeployment()
   nonServiceApp()
