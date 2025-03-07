@@ -177,6 +177,7 @@ def versions = [
 dependencies {
   implementation group: 'ch.qos.logback', name: 'logback-classic', version: versions.logback
   implementation group: 'ch.qos.logback', name: 'logback-core', version: versions.logback
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.0'
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.8'
   implementation group: 'io.rest-assured', name: 'rest-assured'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: versions.log4J
@@ -187,9 +188,13 @@ dependencies {
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
   compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-	testCompileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-	testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  testCompileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  integrationTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  functionalTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  functionalTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   integrationTestImplementation group: 'org.junit.platform', name: 'junit-platform-suite-api', version: versions.junitPlatform
   integrationTestImplementation group: 'org.junit.platform', name: 'junit-platform-suite-engine', version: versions.junitPlatform
