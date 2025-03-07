@@ -12,3 +12,9 @@ azure:
 
 service:
   enabled: ${DISPOSER_FEE_PAY_ENABLED:false}
+
+idam:
+  s2s-auth:
+    name: ${S2S_NAME:disposer-fee-and-pay}
+    url: ${S2S_URL:http://localhost:4502}
+    secret: ${S2S_SECRET_DISPOSER_FEE_AND_PAY:AAAAAAAAAAAAAAAA}
