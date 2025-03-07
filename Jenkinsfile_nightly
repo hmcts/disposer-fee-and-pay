@@ -11,8 +11,33 @@ def type = "java"
 def product = "disposer"
 def component = "fee-and-pay"
 
+def secrets = [
+  'disposer-${env}': [
+    secret('app-insights-connection-string', 'app-insights-connection-string'),
+    secret('s2s-secret-disposer-fee-an-pay', 'S2S_SECRET_DISPOSER_FEE_AND_PAY')
+  ]
+]
+
 withNightlyPipeline(type, product, component) {
+  env.S2S_URL = 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
+
+  loadVaultSecrets(secrets)
   enableAksStagingDeployment()
   disableLegacyDeployment()
   nonServiceApp()
+//  enableMutationTest()
+  enableSlackNotifications('#disposer-builds')
+//  enableFortifyScan()
+
+//  afterAlways('fortify-scan') {
+//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
+//  }
+
+//  afterAlways('mutationTest') {
+//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'functional-output/**/*'
+//  }
+
+  afterAlways('securityScan') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'functional-output/**/*'
+  }
 }
