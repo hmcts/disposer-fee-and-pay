@@ -13,7 +13,7 @@ def branchesToSync = ['demo','perftest','ithc']
 def secrets = [
   'disposer-${env}': [
     setSecret('app-insights-connection-string', 'app-insights-connection-string'),
-    setSecret('s2s-secret-disposer-idam-user', 'S2S_SECRET_DISPOSER_IDAM_USER')
+    setSecret('s2s-secret-disposer-fee-and-pay', 'S2S_SECRET_DISPOSER_FEE_AND_PAY')
   ]
 ]
 
