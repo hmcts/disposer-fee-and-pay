@@ -14,7 +14,7 @@ def component = "fee-and-pay"
 def secrets = [
   'disposer-${env}': [
     setSecret('app-insights-connection-string', 'app-insights-connection-string'),
-    setSecret('s2s-secret-disposer-fee-an-pay', 'S2S_SECRET_DISPOSER_FEE_AND_PAY')
+    setSecret('s2s-secret-disposer-fee-and-pay', 'S2S_SECRET_DISPOSER_FEE_AND_PAY')
   ]
 ]
 
@@ -36,11 +36,11 @@ withNightlyPipeline(type, product, component) {
   nonServiceApp()
 //  enableMutationTest()
   enableSlackNotifications('#disposer-builds')
-//  enableFortifyScan()
+  enableFortifyScan()
 
-//  afterAlways('fortify-scan') {
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
-//  }
+  afterAlways('fortify-scan') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
+  }
 
 //  afterAlways('mutationTest') {
 //    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'functional-output/**/*'
