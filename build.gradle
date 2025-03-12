@@ -110,6 +110,12 @@ tasks.register("integration", Test) {
   failFast = true
 }
 
+tasks.register("fortifyScan", JavaExec) {
+  mainClass = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
+  classpath += sourceSets.test.runtimeClasspath
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+
 tasks.register("smoke", Test) {
   description = "Runs Smoke Tests"
   testClassesDirs = sourceSets.smokeTest.output.classesDirs
@@ -167,6 +173,7 @@ repositories {
 
 def versions = [
   cucumber      : '7.21.1',
+  fortify       : '1.4.7',
   junitPlatform : '1.11.4',
   log4J         : '2.24.3',
   logback       : '1.5.17',
@@ -185,6 +192,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
 
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+  testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: versions.fortify, classifier: 'all'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
   compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
