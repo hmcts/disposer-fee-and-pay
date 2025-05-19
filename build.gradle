@@ -168,12 +168,14 @@ dependencyCheck {
 repositories {
   mavenLocal()
   mavenCentral()
-  maven { url = 'https://jitpack.io' }
+  maven {
+    url = 'https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1'
+  }
 }
 
 def versions = [
   cucumber      : '7.22.2',
-  fortify       : '1.4.8',
+  fortify       : '1.4.9',
   junitPlatform : '1.11.4',
   log4J         : '2.24.3',
   logback       : '1.5.18',
