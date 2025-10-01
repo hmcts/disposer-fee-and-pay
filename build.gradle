@@ -180,7 +180,7 @@ def versions = [
   junitPlatform : '1.12.2',
   log4J         : '2.25.2',
   logback       : '1.5.18',
-  lombok        : '1.18.40',
+  lombok        : '1.18.42',
   serviceAuthClient: '5.3.3',
   wiremock      : '3.13.1'
 ]
