@@ -178,7 +178,7 @@ def versions = [
   cucumber      : '7.23.0',
   fortify       : '1.4.10',
   junitPlatform : '1.12.2',
-  log4J         : '2.25.2',
+  log4J         : '2.25.3',
   logback       : '1.5.22',
   lombok        : '1.18.42',
   serviceAuthClient: '5.3.3',
