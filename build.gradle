@@ -175,7 +175,7 @@ repositories {
 }
 
 def versions = [
-  cucumber      : '7.23.0',
+  cucumber      : '7.34.2',
   fortify       : '1.4.10',
   junitPlatform : '1.12.2',
   log4J         : '2.25.3',
