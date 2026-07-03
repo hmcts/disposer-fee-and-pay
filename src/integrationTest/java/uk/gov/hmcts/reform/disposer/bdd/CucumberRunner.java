@@ -21,7 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
     @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, html:target/cucumber/cucumber-report.html")
 })
 @CucumberContextConfiguration
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("integration")
 @ContextConfiguration(initializers = WireMockInitializer.class)
 public class CucumberRunner {
