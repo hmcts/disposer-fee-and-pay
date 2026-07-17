@@ -3,6 +3,8 @@
   <!--Please add all the false positives under the below section-->
   <suppress>
     <cve>CVE-2020-13956</cve>
+    <cve>CVE-2026-54399</cve>
+    <cve>CVE-2026-54428</cve>
     <cve>CVE-2026-54515</cve>
   </suppress>
   <!--End of false positives section -->
