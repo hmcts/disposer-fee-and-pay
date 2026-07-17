@@ -63,6 +63,11 @@ idea {
   }
 }
 
+checkstyle {
+  maxWarnings = 0
+  toolVersion = '13.7.0'
+}
+
 configurations {
   functionalTestImplementation.extendsFrom testImplementation
   functionalTestRuntimeOnly.extendsFrom runtimeOnly
