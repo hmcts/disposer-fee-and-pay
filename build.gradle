@@ -186,7 +186,7 @@ def versions = [
   logback       : '1.6.3',
   lombok        : '1.18.46',
   restAssured   : '6.0.1',
-  serviceAuthClient: '6.0.1',
+  serviceAuthClient: '6.1.0',
   wiremock      : '3.13.2'
 ]
 
