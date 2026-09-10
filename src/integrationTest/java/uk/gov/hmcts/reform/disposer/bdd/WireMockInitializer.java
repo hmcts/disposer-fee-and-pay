@@ -26,8 +26,16 @@ public class WireMockInitializer implements ApplicationContextInitializer<Config
             }
         });
 
+        String wireMockBaseUrl = "http://localhost:" + wireMockServer.port();
         TestPropertyValues
-            .of(Map.of("baseUrl", "http://localhost:" + wireMockServer.port()))
+            .of(Map.of(
+                "baseUrl", wireMockBaseUrl,
+                "ccd.data-store.url", wireMockBaseUrl,
+                "idam.s2s-auth.url", wireMockBaseUrl,
+                "ccd.user-token", "Bearer integration-user-token",
+                "service.enabled", "false",
+                "service.ttl-years", "7"
+            ))
             .applyTo(applicationContext);
     }
 
