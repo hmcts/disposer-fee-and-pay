@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.disposer.client.ccd;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,14 +26,22 @@ public class CcdDataStoreClient {
     private final RestClient ccdDataStoreRestClient;
     private final ServiceTokenGenerator serviceTokenGenerator;
 
+    @Autowired
     public CcdDataStoreClient(
         @Value("${ccd.data-store.url}") String ccdDataStoreUrl,
         ServiceTokenGenerator serviceTokenGenerator
     ) {
-        this.ccdDataStoreRestClient = RestClient
-            .builder()
-            .baseUrl(ccdDataStoreUrl)
-            .build();
+        this(
+            RestClient
+                .builder()
+                .baseUrl(ccdDataStoreUrl)
+                .build(),
+            serviceTokenGenerator
+        );
+    }
+
+    CcdDataStoreClient(RestClient ccdDataStoreRestClient, ServiceTokenGenerator serviceTokenGenerator) {
+        this.ccdDataStoreRestClient = ccdDataStoreRestClient;
         this.serviceTokenGenerator = serviceTokenGenerator;
     }
 
