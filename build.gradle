@@ -3,10 +3,10 @@ plugins {
   id 'jacoco'
   id 'idea'
   id 'io.spring.dependency-management' version '1.1.7'
-  id 'org.springframework.boot' version '4.0.7'
-  id 'com.github.ben-manes.versions' version '0.54.0'
-  id 'org.sonarqube' version '7.3.1.8318'
-  id 'org.owasp.dependencycheck' version '12.2.2'
+  id 'org.springframework.boot' version '4.1.1'
+  id 'com.github.ben-manes.versions' version '0.61.0'
+  id 'org.sonarqube' version '7.5.0.8588'
+  id 'org.owasp.dependencycheck' version '13.0.0'
   /*
     Applies analysis tools including checkstyle and OWASP Dependency checker.
     See https://github.com/hmcts/gradle-java-plugin
@@ -19,7 +19,7 @@ version = '0.0.1'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(21)
+    languageVersion = JavaLanguageVersion.of(25)
   }
 }
 
@@ -65,7 +65,7 @@ idea {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '13.8.0'
+  toolVersion = '14.1.0'
 }
 
 configurations {
@@ -180,13 +180,13 @@ repositories {
 }
 
 def versions = [
-  cucumber      : '7.34.4',
+  cucumber      : '7.34.7',
   fortify       : '1.4.10',
   log4J         : '2.26.1',
-  logback       : '1.5.38',
-  lombok        : '1.18.46',
+  logback       : '1.6.3',
+  lombok        : '1.18.48',
   restAssured   : '6.0.1',
-  serviceAuthClient: '6.0.0',
+  serviceAuthClient: '6.1.0',
   wiremock      : '3.13.2'
 ]
 
