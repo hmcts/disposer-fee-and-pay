@@ -22,7 +22,7 @@ public class PaymentDisposerService {
     @Value("${service.ttl-years}")
     private int ttlYears;
 
-    public List<String> run() {
+    public List<String> processClosedCases() {
         LocalDate eligibleClosedDate = LocalDate.now(ZoneOffset.UTC).minusYears(ttlYears);
         log.info("Retrieving cases from CCD with closed date {}", eligibleClosedDate);
         try {

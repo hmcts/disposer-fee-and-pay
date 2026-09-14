@@ -108,7 +108,7 @@ public class ExampleTestSteps {
 
     @When("the payment disposer runs")
     public void thePaymentDisposerRuns() {
-        closedCaseReferences = paymentDisposerService.run();
+        closedCaseReferences = paymentDisposerService.processClosedCases();
     }
 
     @Then("the closed case references are returned")

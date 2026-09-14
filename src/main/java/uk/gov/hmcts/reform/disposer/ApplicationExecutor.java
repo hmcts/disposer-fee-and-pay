@@ -22,7 +22,7 @@ public class ApplicationExecutor implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         if (isServiceEnabled) {
             log.info("Service is enabled ...");
-            paymentDisposerService.run();
+            paymentDisposerService.processClosedCases();
         } else {
             log.info("Service is disabled ...");
         }

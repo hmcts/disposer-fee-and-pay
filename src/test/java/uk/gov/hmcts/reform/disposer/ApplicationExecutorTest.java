@@ -31,7 +31,7 @@ class ApplicationExecutorTest {
 
         applicationExecutor.run(new DefaultApplicationArguments());
 
-        verify(paymentDisposerService).run();
+        verify(paymentDisposerService).processClosedCases();
     }
 
     @Test

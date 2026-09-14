@@ -42,13 +42,13 @@ class PaymentDisposerServiceTest {
     }
 
     @Test
-    void runRetrievesClosedCasesForEligibleDate() {
+    void processClosedCasesRetrievesClosedCasesForEligibleDate() {
         LocalDate expectedDate = LocalDate.now(ZoneOffset.UTC).minusYears(TTL_YEARS);
         when(userTokenProvider.getUserToken()).thenReturn(USER_TOKEN);
         when(ccdDataStoreClient.getClosedCases(expectedDate, USER_TOKEN))
             .thenReturn(List.of("1234567890123456", "6543210987654321"));
 
-        List<String> result = paymentDisposerService.run();
+        List<String> result = paymentDisposerService.processClosedCases();
 
         assertThat(result).containsExactly("1234567890123456", "6543210987654321");
         ArgumentCaptor<LocalDate> dateCaptor = ArgumentCaptor.forClass(LocalDate.class);
@@ -57,14 +57,14 @@ class PaymentDisposerServiceTest {
     }
 
     @Test
-    void runPropagatesCcdDataStoreClientException() {
+    void processClosedCasesPropagatesCcdDataStoreClientException() {
         LocalDate expectedDate = LocalDate.now(ZoneOffset.UTC).minusYears(TTL_YEARS);
         when(userTokenProvider.getUserToken()).thenReturn(USER_TOKEN);
         when(ccdDataStoreClient.getClosedCases(expectedDate, USER_TOKEN))
             .thenThrow(new CcdDataStoreClientException("failed", new RuntimeException("boom")));
 
         assertThatExceptionOfType(CcdDataStoreClientException.class)
-            .isThrownBy(() -> paymentDisposerService.run())
+            .isThrownBy(() -> paymentDisposerService.processClosedCases())
             .withMessage("failed");
     }
 }
