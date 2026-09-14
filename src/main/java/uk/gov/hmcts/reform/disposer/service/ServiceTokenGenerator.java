@@ -17,9 +17,10 @@ public class ServiceTokenGenerator {
 
     private String serviceToken = "dummy token";
 
-    public void generateToken() {
+    public String generateToken() {
         try {
             serviceToken = authTokenGenerator.generate();
+            return serviceToken;
         } catch (Exception e) {
             String msg = String.format("Failed to generate service token - %s", e.getMessage());
             log.error(msg, e);

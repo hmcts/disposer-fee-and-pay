@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.disposer.service;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -25,7 +26,12 @@ class ServiceTokenGeneratorTest {
 
     @Test
     void generateTokenGeneratesToken() {
-        serviceTokenGenerator.generateToken();
+        when(authTokenGenerator.generate()).thenReturn("Bearer generated-token");
+
+        String token = serviceTokenGenerator.generateToken();
+
+        assertThat(token).isEqualTo("Bearer generated-token");
+        assertThat(serviceTokenGenerator.getServiceToken()).isEqualTo("Bearer generated-token");
         verify(authTokenGenerator, times(1)).generate();
     }
 

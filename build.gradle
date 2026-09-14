@@ -210,6 +210,7 @@ dependencies {
   implementation "org.apache.logging.log4j:log4j-api:${versions.log4J}"
   implementation "org.apache.logging.log4j:log4j-to-slf4j:${versions.log4J}"
   implementation "org.springframework.boot:spring-boot-starter-json"
+  implementation "org.springframework:spring-web"
 
   testImplementation "org.springframework.boot:spring-boot-starter-test"
   testImplementation "com.github.hmcts:fortify-client:${versions.fortify}:all"

@@ -12,6 +12,12 @@ azure:
 
 service:
   enabled: ${DISPOSER_FEE_PAY_ENABLED:false}
+  ttl-years: ${DISPOSER_FEE_PAY_TTL_YEARS:7}
+
+ccd:
+  data-store:
+    url: ${CCD_DATA_STORE_URL:http://localhost:4452}
+  user-token: ${CCD_USER_TOKEN:}
 
 idam:
   s2s-auth:
