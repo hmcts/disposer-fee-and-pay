@@ -7,18 +7,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.hmcts.reform.disposer.service.ServiceTokenGenerator;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 @SpringBootTest
 @ActiveProfiles("functional")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 class SampleFunctionalTest {
 
-    private final ServiceTokenGenerator serviceTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Test
     void itShouldGenerateServiceToken() {
-        serviceTokenGenerator.generateToken();
-        assertThat(serviceTokenGenerator.getServiceToken()).startsWith("Bearer eyJhbGciOiJIUzUxMiJ9");
+        String token = authTokenGenerator.generate();
+        assertThat(token).contains("eyJhbGciOiJIUzUxMiJ9");
     }
 }
