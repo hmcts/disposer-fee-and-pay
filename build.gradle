@@ -179,6 +179,16 @@ repositories {
   }
 }
 
+ext {
+  springCloudVersion = '2025.1.2'
+}
+
+dependencyManagement {
+  imports {
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+  }
+}
+
 def versions = [
   cucumber      : '7.34.7',
   fortify       : '1.4.10',
@@ -210,7 +220,11 @@ dependencies {
   implementation "org.apache.logging.log4j:log4j-api:${versions.log4J}"
   implementation "org.apache.logging.log4j:log4j-to-slf4j:${versions.log4J}"
   implementation "org.springframework.boot:spring-boot-starter-json"
+  implementation "org.springframework.boot:spring-boot-starter-security"
+  implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+  implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
   implementation "org.springframework:spring-web"
+  implementation group: 'com.github.hmcts', name: 'idam-legacy-auth-support', version: '1.0.1'
 
   testImplementation "org.springframework.boot:spring-boot-starter-test"
   testImplementation "com.github.hmcts:fortify-client:${versions.fortify}:all"

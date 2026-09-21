@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.disposer.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,13 +24,9 @@ import java.util.List;
 class PaymentDisposerServiceTest {
 
     private static final int TTL_YEARS = 7;
-    private static final String USER_TOKEN = "Bearer user-token";
 
     @Mock
     private CcdDataStoreClient ccdDataStoreClient;
-
-    @Mock
-    private UserTokenProvider userTokenProvider;
 
     @InjectMocks
     private PaymentDisposerService paymentDisposerService;
@@ -44,23 +39,21 @@ class PaymentDisposerServiceTest {
     @Test
     void processClosedCasesRetrievesClosedCasesForEligibleDate() {
         LocalDate expectedDate = LocalDate.now(ZoneOffset.UTC).minusYears(TTL_YEARS);
-        when(userTokenProvider.getUserToken()).thenReturn(USER_TOKEN);
-        when(ccdDataStoreClient.getClosedCases(expectedDate, USER_TOKEN))
+        when(ccdDataStoreClient.getClosedCases(expectedDate))
             .thenReturn(List.of("1234567890123456", "6543210987654321"));
 
         List<String> result = paymentDisposerService.processClosedCases();
 
         assertThat(result).containsExactly("1234567890123456", "6543210987654321");
         ArgumentCaptor<LocalDate> dateCaptor = ArgumentCaptor.forClass(LocalDate.class);
-        verify(ccdDataStoreClient).getClosedCases(dateCaptor.capture(), eq(USER_TOKEN));
+        verify(ccdDataStoreClient).getClosedCases(dateCaptor.capture());
         assertThat(dateCaptor.getValue()).isEqualTo(expectedDate);
     }
 
     @Test
     void processClosedCasesPropagatesCcdDataStoreClientException() {
         LocalDate expectedDate = LocalDate.now(ZoneOffset.UTC).minusYears(TTL_YEARS);
-        when(userTokenProvider.getUserToken()).thenReturn(USER_TOKEN);
-        when(ccdDataStoreClient.getClosedCases(expectedDate, USER_TOKEN))
+        when(ccdDataStoreClient.getClosedCases(expectedDate))
             .thenThrow(new CcdDataStoreClientException("failed", new RuntimeException("boom")));
 
         assertThatExceptionOfType(CcdDataStoreClientException.class)

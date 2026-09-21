@@ -17,7 +17,6 @@ import java.util.List;
 public class PaymentDisposerService {
 
     private final CcdDataStoreClient ccdDataStoreClient;
-    private final UserTokenProvider userTokenProvider;
 
     @Value("${service.ttl-years}")
     private int ttlYears;
@@ -26,10 +25,7 @@ public class PaymentDisposerService {
         LocalDate eligibleClosedDate = LocalDate.now(ZoneOffset.UTC).minusYears(ttlYears);
         log.info("Retrieving cases from CCD with closed date {}", eligibleClosedDate);
         try {
-            List<String> caseReferences = ccdDataStoreClient.getClosedCases(
-                eligibleClosedDate,
-                userTokenProvider.getUserToken()
-            );
+            List<String> caseReferences = ccdDataStoreClient.getClosedCases(eligibleClosedDate);
             log.info(
                 "Retrieved {} eligible case references from CCD for closed date {}",
                 caseReferences.size(),

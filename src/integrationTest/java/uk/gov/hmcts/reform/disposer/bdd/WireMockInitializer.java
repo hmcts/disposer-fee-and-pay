@@ -7,8 +7,6 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 
-import java.util.Map;
-
 public class WireMockInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
@@ -28,14 +26,17 @@ public class WireMockInitializer implements ApplicationContextInitializer<Config
 
         String wireMockBaseUrl = "http://localhost:" + wireMockServer.port();
         TestPropertyValues
-            .of(Map.of(
-                "baseUrl", wireMockBaseUrl,
-                "ccd.data-store.url", wireMockBaseUrl,
-                "idam.s2s-auth.url", wireMockBaseUrl,
-                "ccd.user-token", "Bearer integration-user-token",
-                "service.enabled", "false",
-                "service.ttl-years", "7"
-            ))
+            .of(
+                "baseUrl=" + wireMockBaseUrl,
+                "ccd.data-store.url=" + wireMockBaseUrl,
+                "idam.s2s-auth.url=" + wireMockBaseUrl,
+                "spring.security.oauth2.client.provider.ccd-data-store.token-uri=" + wireMockBaseUrl + "/o/token",
+                "spring.security.oauth2.client.registration.ccd-data-store.client-secret=integration-client-secret",
+                "idam.legacy.password-grant.service-account.email-address=disposer@test.com",
+                "idam.legacy.password-grant.service-account.password=password",
+                "service.enabled=false",
+                "service.ttl-years=7"
+            )
             .applyTo(applicationContext);
     }
 

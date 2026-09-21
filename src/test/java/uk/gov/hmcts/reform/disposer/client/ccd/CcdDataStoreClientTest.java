@@ -3,113 +3,91 @@ package uk.gov.hmcts.reform.disposer.client.ccd;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-import org.junit.jupiter.api.BeforeEach;
+import feign.FeignException;
+import feign.Request;
+import feign.RequestTemplate;
+import feign.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestClient;
 import uk.gov.hmcts.reform.disposer.exception.CcdDataStoreClientException;
-import uk.gov.hmcts.reform.disposer.service.ServiceTokenGenerator;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
 class CcdDataStoreClientTest {
 
     private static final LocalDate CLOSED_DATE = LocalDate.of(2019, 1, 15);
-    private static final String USER_TOKEN = "Bearer user-token";
-    private static final String SERVICE_TOKEN = "Bearer service-token";
+    private static final String CLOSED_DATE_PATH = "2019-01-15";
 
     @Mock
-    private ServiceTokenGenerator serviceTokenGenerator;
+    private CcdDataStoreApi ccdDataStoreApi;
 
-    private MockRestServiceServer mockServer;
+    @InjectMocks
     private CcdDataStoreClient ccdDataStoreClient;
-
-    @BeforeEach
-    void setUp() {
-        RestClient.Builder builder = RestClient.builder();
-        mockServer = MockRestServiceServer.bindTo(builder).build();
-        ccdDataStoreClient = new CcdDataStoreClient(builder.build(), serviceTokenGenerator);
-    }
 
     @Test
     void getClosedCasesReturnsCaseReferences() {
-        when(serviceTokenGenerator.generateToken()).thenReturn(SERVICE_TOKEN);
-        mockServer.expect(requestTo("/internal/searchCases/getClosedCases/2019-01-15"))
-            .andExpect(method(HttpMethod.GET))
-            .andExpect(header(HttpHeaders.AUTHORIZATION, USER_TOKEN))
-            .andExpect(header("ServiceAuthorization", SERVICE_TOKEN))
-            .andRespond(withSuccess(
-                "{\"caseReferences\":[\"1111111111111111\",\"2222222222222222\"]}",
-                MediaType.APPLICATION_JSON
-            ));
+        when(ccdDataStoreApi.getClosedCases(CLOSED_DATE_PATH))
+            .thenReturn(new DateCaseClosedResponse(List.of("1111111111111111", "2222222222222222")));
 
-        List<String> result = ccdDataStoreClient.getClosedCases(CLOSED_DATE, USER_TOKEN);
+        List<String> result = ccdDataStoreClient.getClosedCases(CLOSED_DATE);
 
         assertThat(result).containsExactly("1111111111111111", "2222222222222222");
-        mockServer.verify();
     }
 
     @Test
     void getClosedCasesReturnsEmptyListWhenBodyIsNull() {
-        when(serviceTokenGenerator.generateToken()).thenReturn(SERVICE_TOKEN);
-        mockServer.expect(requestTo("/internal/searchCases/getClosedCases/2019-01-15"))
-            .andRespond(withSuccess("", MediaType.APPLICATION_JSON));
+        when(ccdDataStoreApi.getClosedCases(CLOSED_DATE_PATH)).thenReturn(null);
 
-        List<String> result = ccdDataStoreClient.getClosedCases(CLOSED_DATE, USER_TOKEN);
-
-        assertThat(result).isEmpty();
-        mockServer.verify();
+        assertThat(ccdDataStoreClient.getClosedCases(CLOSED_DATE)).isEmpty();
     }
 
     @Test
     void getClosedCasesReturnsEmptyListWhenCaseReferencesNull() {
-        when(serviceTokenGenerator.generateToken()).thenReturn(SERVICE_TOKEN);
-        mockServer.expect(requestTo("/internal/searchCases/getClosedCases/2019-01-15"))
-            .andRespond(withSuccess("{}", MediaType.APPLICATION_JSON));
+        when(ccdDataStoreApi.getClosedCases(CLOSED_DATE_PATH)).thenReturn(new DateCaseClosedResponse(null));
 
-        List<String> result = ccdDataStoreClient.getClosedCases(CLOSED_DATE, USER_TOKEN);
-
-        assertThat(result).isEmpty();
-        mockServer.verify();
+        assertThat(ccdDataStoreClient.getClosedCases(CLOSED_DATE)).isEmpty();
     }
 
     @Test
     void getClosedCasesReturnsEmptyListOnNotFound() {
-        when(serviceTokenGenerator.generateToken()).thenReturn(SERVICE_TOKEN);
-        mockServer.expect(requestTo("/internal/searchCases/getClosedCases/2019-01-15"))
-            .andRespond(withStatus(HttpStatus.NOT_FOUND));
+        when(ccdDataStoreApi.getClosedCases(CLOSED_DATE_PATH)).thenThrow(feignException(404));
 
-        List<String> result = ccdDataStoreClient.getClosedCases(CLOSED_DATE, USER_TOKEN);
-
-        assertThat(result).isEmpty();
-        mockServer.verify();
+        assertThat(ccdDataStoreClient.getClosedCases(CLOSED_DATE)).isEmpty();
     }
 
     @Test
     void getClosedCasesThrowsCcdDataStoreClientExceptionOnServerError() {
-        when(serviceTokenGenerator.generateToken()).thenReturn(SERVICE_TOKEN);
-        mockServer.expect(requestTo("/internal/searchCases/getClosedCases/2019-01-15"))
-            .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
+        when(ccdDataStoreApi.getClosedCases(CLOSED_DATE_PATH)).thenThrow(feignException(500));
 
         assertThatExceptionOfType(CcdDataStoreClientException.class)
-            .isThrownBy(() -> ccdDataStoreClient.getClosedCases(CLOSED_DATE, USER_TOKEN))
+            .isThrownBy(() -> ccdDataStoreClient.getClosedCases(CLOSED_DATE))
             .withMessage("Failed to retrieve closed cases from CCD for date 2019-01-15");
+    }
 
-        mockServer.verify();
+    private FeignException feignException(int status) {
+        return FeignException.errorStatus(
+            "getClosedCases",
+            Response.builder()
+                .status(status)
+                .reason("error")
+                .request(Request.create(
+                    Request.HttpMethod.GET,
+                    "/internal/searchCases/getClosedCases/" + CLOSED_DATE_PATH,
+                    Map.of(),
+                    null,
+                    StandardCharsets.UTF_8,
+                    new RequestTemplate()
+                ))
+                .headers(Map.of())
+                .build()
+        );
     }
 }

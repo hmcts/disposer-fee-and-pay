@@ -31,6 +31,8 @@ public class ExampleTestSteps {
 
     private static final String SERVICE_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0In0.c2lnbmF0dXJl";
     private static final String BEARER_SERVICE_TOKEN = "Bearer " + SERVICE_TOKEN;
+    private static final String USER_ACCESS_TOKEN = "idam-access-token";
+    private static final String BEARER_USER_TOKEN = "Bearer " + USER_ACCESS_TOKEN;
 
     @Autowired
     private WireMockServer wireMockServer;
@@ -43,9 +45,6 @@ public class ExampleTestSteps {
 
     @Value("${service.ttl-years}")
     private int ttlYears;
-
-    @Value("${ccd.user-token}")
-    private String userToken;
 
     private String body;
     private List<String> closedCaseReferences;
@@ -106,6 +105,18 @@ public class ExampleTestSteps {
         );
     }
 
+    @And("IdAM returns a user access token")
+    public void idamReturnsAUserAccessToken() {
+        wireMockServer.stubFor(
+            post(urlPathEqualTo("/o/token"))
+                .willReturn(aResponse()
+                    .withStatus(200)
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .withBody("{\"access_token\":\"" + USER_ACCESS_TOKEN
+                        + "\",\"expires_in\":3600,\"token_type\":\"Bearer\"}"))
+        );
+    }
+
     @When("the payment disposer runs")
     public void thePaymentDisposerRuns() {
         closedCaseReferences = paymentDisposerService.processClosedCases();
@@ -125,7 +136,7 @@ public class ExampleTestSteps {
     public void ccdWasCalledWithUserAndServiceAuthorizationHeaders() {
         wireMockServer.verify(
             getRequestedFor(urlEqualTo(closedCasesPath()))
-                .withHeader(HttpHeaders.AUTHORIZATION, equalTo(userToken))
+                .withHeader(HttpHeaders.AUTHORIZATION, equalTo(BEARER_USER_TOKEN))
                 .withHeader("ServiceAuthorization", equalTo(BEARER_SERVICE_TOKEN))
         );
     }

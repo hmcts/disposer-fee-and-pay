@@ -5,6 +5,22 @@ spring:
     import: "optional:configtree:/mnt/secrets/disposer/"
   application:
     name: Fee and Pay Disposer
+  security:
+    oauth2:
+      client:
+        registration:
+          ccd-data-store:
+            authorization-grant-type: password
+            client-id: disposer_fee_and_pay
+            client-secret: ${DISPOSER_FEE_AND_PAY_CLIENT_SECRET:disposer_fee_and_pay_secret}
+            client-authentication-method: client_secret_post
+            scope:
+              - openid
+              - profile
+              - roles
+        provider:
+          ccd-data-store:
+            token-uri: ${IDAM_API_URL:http://localhost:5000}/o/token
 
 azure:
   application-insights:
@@ -17,10 +33,17 @@ service:
 ccd:
   data-store:
     url: ${CCD_DATA_STORE_URL:http://localhost:4452}
-  user-token: ${CCD_USER_TOKEN:}
 
 idam:
   s2s-auth:
-    name: ${S2S_NAME:disposer-fee-and-pay}
+    microservice: ${S2S_NAME:disposer-fee-and-pay}
+    totp_secret: ${S2S_SECRET_DISPOSER_FEE_AND_PAY:AAAAAAAAAAAAAAAA}
     url: ${S2S_URL:http://localhost:4502}
-    secret: ${S2S_SECRET_DISPOSER_FEE_AND_PAY:AAAAAAAAAAAAAAAA}
+    endpoint-regex: /internal/searchCases/getClosedCases.*
+  legacy:
+    password-grant:
+      registration-reference: ccd-data-store
+      endpoint-regex: /internal/searchCases/getClosedCases.*
+      service-account:
+        email-address: ${DISPOSER_SYSTEM_USER:disposer@gmail.com}
+        password: ${DISPOSER_SYSTEM_USER_PASSWORD:}

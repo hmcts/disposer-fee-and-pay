@@ -2,8 +2,10 @@ package uk.gov.hmcts.reform.disposer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication
+@SpringBootApplication(excludeName = "cft.idam.legacy.auth.support.config.DefaultPasswordGrantAutoConfiguration")
+@EnableFeignClients(basePackages = "uk.gov.hmcts.reform.disposer.client")
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
 public class Application {
 
