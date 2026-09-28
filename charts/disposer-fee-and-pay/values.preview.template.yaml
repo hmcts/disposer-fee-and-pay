@@ -6,6 +6,9 @@ job:
     S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
     IDAM_API_URL: https://idam-api.aat.platform.hmcts.net
     CCD_DATA_STORE_URL: http://ccd-data-store-api-aat.service.core-compute-aat.internal
+    PAYMENTS_URL: http://payment-api-aat.service.core-compute-aat.internal
+    REFUNDS_URL: http://ccpay-refunds-api-aat.service.core-compute-aat.internal
+    BULK_SCANNING_URL: http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal
   kind: CronJob
   schedule: "* */2 * * *"
   startingDeadlineSeconds: 300
