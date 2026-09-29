@@ -34,12 +34,27 @@ ccd:
   data-store:
     url: ${CCD_DATA_STORE_URL:http://localhost:4452}
 
+payments:
+  url: ${PAYMENTS_URL:${FEE_AND_PAY_URL:http://localhost:8080}}
+refunds:
+  url: ${REFUNDS_URL:http://localhost:8081}
+bulk-scanning:
+  url: ${BULK_SCANNING_URL:http://localhost:8082}
+
+deletion:
+  retry:
+    max-attempts: ${DELETION_RETRY_MAX_ATTEMPTS:3}
+    initial-backoff-ms: ${DELETION_RETRY_INITIAL_BACKOFF_MS:1000}
+    multiplier: ${DELETION_RETRY_MULTIPLIER:2.0}
+  audit:
+    source: ${DELETION_AUDIT_SOURCE:disposer-fee-and-pay}
+
 idam:
   s2s-auth:
     microservice: ${S2S_NAME:disposer-fee-and-pay}
     totp_secret: ${S2S_SECRET_DISPOSER_FEE_AND_PAY:AAAAAAAAAAAAAAAA}
     url: ${S2S_URL:http://localhost:4502}
-    endpoint-regex: /internal/searchCases/getClosedCases.*
+    endpoint-regex: (/internal/searchCases/getClosedCases.*|/refunds/ccd_case_reference/.*|/ccd_case_reference/.*|/payments/ccd_case_reference/.*)
   legacy:
     password-grant:
       registration-reference: ccd-data-store

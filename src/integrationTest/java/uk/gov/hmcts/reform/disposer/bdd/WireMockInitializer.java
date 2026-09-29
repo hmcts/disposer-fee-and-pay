@@ -29,13 +29,20 @@ public class WireMockInitializer implements ApplicationContextInitializer<Config
             .of(
                 "baseUrl=" + wireMockBaseUrl,
                 "ccd.data-store.url=" + wireMockBaseUrl,
+                "payments.url=" + wireMockBaseUrl,
+                "refunds.url=" + wireMockBaseUrl,
+                "bulk-scanning.url=" + wireMockBaseUrl,
                 "idam.s2s-auth.url=" + wireMockBaseUrl,
                 "spring.security.oauth2.client.provider.ccd-data-store.token-uri=" + wireMockBaseUrl + "/o/token",
                 "spring.security.oauth2.client.registration.ccd-data-store.client-secret=integration-client-secret",
                 "idam.legacy.password-grant.service-account.email-address=disposer@test.com",
                 "idam.legacy.password-grant.service-account.password=password",
                 "service.enabled=false",
-                "service.ttl-years=7"
+                "service.ttl-years=7",
+                "deletion.retry.max-attempts=3",
+                "deletion.retry.initial-backoff-ms=1",
+                "deletion.retry.multiplier=1.0",
+                "deletion.audit.source=disposer-fee-and-pay"
             )
             .applyTo(applicationContext);
     }

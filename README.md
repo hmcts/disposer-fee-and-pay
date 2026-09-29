@@ -130,6 +130,20 @@ The script creates a Job from the CronJob only when no active `disposer-fee-and-
 If an active job exists it logs a blocked manual run message and exits without creating another job.
 If the manual disposer is triggered twice and the disposer has already processed historical cases then the system will skip already-deleted cases and logs this as a non-action.
 
+## Fee & Pay deletion (CME-953 / CME-954 / CME-955 / CME-956)
+
+After retrieving eligible closed case IDs from CCD, the disposer deletes Fee & Pay records by CCD case number, in LLD order:
+
+1. Refunds API — `DELETE /refunds/ccd_case_reference/{ccd-case-number}`
+2. Bulk Scanning API — `DELETE /ccd_case_reference/{ccd-case-number}`
+3. Payments API — `DELETE /payments/ccd_case_reference/{ccd-case-number}`
+
+Refunds API removes associated notifications. Payment API deletes Digital BAR data. The disposer does not call Notifications or BAR.
+
+Each delete expects HTTP 204 (including when nothing remains). 403/409/500 are retried. Successful deletes write `AUDIT_DELETION`. The run emits Application Insights custom events (`Fee and Pay Deletion - Started` / `- Completed - Success|Partial Success|Failed`). Azure Monitor emails support when a run is missing, incomplete, or failed.
+
+Mixed success/failure is summarised as an internal multi-status (`207`) result.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
