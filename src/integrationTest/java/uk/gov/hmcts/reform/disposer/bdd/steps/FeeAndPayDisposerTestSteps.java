@@ -6,7 +6,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
@@ -23,14 +22,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.client.RestClient;
 import uk.gov.hmcts.reform.disposer.domain.DisposalRunResult;
 import uk.gov.hmcts.reform.disposer.service.PaymentDisposerService;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 
-public class ExampleTestSteps {
+public class FeeAndPayDisposerTestSteps {
 
     private static final String SERVICE_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0In0.c2lnbmF0dXJl";
     private static final String BEARER_SERVICE_TOKEN = "Bearer " + SERVICE_TOKEN;
@@ -43,39 +41,15 @@ public class ExampleTestSteps {
     @Autowired
     private PaymentDisposerService paymentDisposerService;
 
-    @Value("${baseUrl}")
-    private String baseUrl;
-
     @Value("${service.ttl-years}")
     private int ttlYears;
 
-    private String body;
     private DisposalRunResult disposalRunResult;
 
     @Before
     public void resetWireMock() {
         wireMockServer.resetAll();
         disposalRunResult = null;
-        body = null;
-    }
-
-    @Given("WireMock is running")
-    public void wireMockIsRunning() {
-        wireMockServer.stubFor(get("/test").willReturn(ok("hello")));
-    }
-
-    @When("We make a request to WireMock")
-    public void weMakeARequestToWireMock() {
-        RestClient client = RestClient.create();
-        body = client.get()
-            .uri(baseUrl + "/test")
-            .retrieve()
-            .body(String.class);
-    }
-
-    @Then("We receive a response from WireMock")
-    public void weReceiveAResponseFromWireMock() {
-        assertThat(body).isEqualTo("hello");
     }
 
     @Given("CCD returns closed cases for the eligible date")
