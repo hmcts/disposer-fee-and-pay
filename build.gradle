@@ -180,7 +180,7 @@ repositories {
 }
 
 def versions = [
-  cucumber      : '7.34.7',
+  cucumber      : '7.34.9',
   fortify       : '1.4.10',
   log4J         : '2.26.1',
   logback       : '1.6.3',
