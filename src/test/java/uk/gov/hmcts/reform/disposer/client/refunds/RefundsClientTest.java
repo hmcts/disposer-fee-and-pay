@@ -47,7 +47,7 @@ class RefundsClientTest {
     private feign.FeignException feignException(int status) {
         Request request = Request.create(
             Request.HttpMethod.DELETE,
-            "/refunds/ccd_case_reference/CASE-1",
+            "/cases/CASE-1/refunds",
             Map.of(),
             null,
             StandardCharsets.UTF_8,

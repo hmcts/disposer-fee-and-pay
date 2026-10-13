@@ -47,7 +47,7 @@ class BulkScanningClientTest {
     private feign.FeignException feignException(int status) {
         Request request = Request.create(
             Request.HttpMethod.DELETE,
-            "/ccd_case_reference/CASE-1",
+            "/cases/CASE-1/bulk-scan-payments",
             Map.of(),
             null,
             StandardCharsets.UTF_8,

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface PaymentsApi {
 
     @DeleteMapping(
-        value = "/payments/ccd_case_reference/{ccdCaseNumber}",
+        value = "/cases/{ccd-case-number}/payments",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    void deletePaymentsByCase(@PathVariable("ccdCaseNumber") String ccdCaseNumber);
+    void deletePaymentsByCase(@PathVariable("ccd-case-number") String ccdCaseNumber);
 }

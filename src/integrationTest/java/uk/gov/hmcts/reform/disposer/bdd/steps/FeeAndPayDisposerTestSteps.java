@@ -152,24 +152,30 @@ public class FeeAndPayDisposerTestSteps {
 
     @And("Fee and Pay delete endpoints were called")
     public void feeAndPayDeleteEndpointsWereCalled() {
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(
-            "/refunds/ccd_case_reference/1111111111111111")));
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(
-            "/refunds/ccd_case_reference/2222222222222222")));
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(
-            "/ccd_case_reference/1111111111111111")));
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(
-            "/ccd_case_reference/2222222222222222")));
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(
-            "/payments/ccd_case_reference/1111111111111111")));
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(
-            "/payments/ccd_case_reference/2222222222222222")));
+        wireMockServer.verify(deleteRequestedFor(urlEqualTo(refundsPath("1111111111111111"))));
+        wireMockServer.verify(deleteRequestedFor(urlEqualTo(refundsPath("2222222222222222"))));
+        wireMockServer.verify(deleteRequestedFor(urlEqualTo(bulkScanPath("1111111111111111"))));
+        wireMockServer.verify(deleteRequestedFor(urlEqualTo(bulkScanPath("2222222222222222"))));
+        wireMockServer.verify(deleteRequestedFor(urlEqualTo(paymentsPath("1111111111111111"))));
+        wireMockServer.verify(deleteRequestedFor(urlEqualTo(paymentsPath("2222222222222222"))));
     }
 
     private void stubFeeAndPayDeletes(String caseReference, int paymentDeleteStatus) {
-        stubDelete("/refunds/ccd_case_reference/" + caseReference, 204);
-        stubDelete("/ccd_case_reference/" + caseReference, 204);
-        stubDelete("/payments/ccd_case_reference/" + caseReference, paymentDeleteStatus);
+        stubDelete(refundsPath(caseReference), 204);
+        stubDelete(bulkScanPath(caseReference), 204);
+        stubDelete(paymentsPath(caseReference), paymentDeleteStatus);
+    }
+
+    private static String refundsPath(String caseReference) {
+        return "/cases/" + caseReference + "/refunds";
+    }
+
+    private static String bulkScanPath(String caseReference) {
+        return "/cases/" + caseReference + "/bulk-scan-payments";
+    }
+
+    private static String paymentsPath(String caseReference) {
+        return "/cases/" + caseReference + "/payments";
     }
 
     private void stubDelete(String path, int status) {

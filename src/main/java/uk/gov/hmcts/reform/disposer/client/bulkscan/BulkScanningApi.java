@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface BulkScanningApi {
 
     @DeleteMapping(
-        value = "/ccd_case_reference/{ccdCaseNumber}",
+        value = "/cases/{ccd-case-number}/bulk-scan-payments",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    void deleteByCase(@PathVariable("ccdCaseNumber") String ccdCaseNumber);
+    void deleteByCase(@PathVariable("ccd-case-number") String ccdCaseNumber);
 }

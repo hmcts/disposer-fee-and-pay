@@ -35,7 +35,7 @@ ccd:
     url: ${CCD_DATA_STORE_URL:http://localhost:4452}
 
 payments:
-  url: ${PAYMENTS_URL:${FEE_AND_PAY_URL:http://localhost:8080}}
+  url: ${PAYMENTS_URL:http://localhost:8080}
 refunds:
   url: ${REFUNDS_URL:http://localhost:8081}
 bulk-scanning:
@@ -54,7 +54,7 @@ idam:
     microservice: ${S2S_NAME:disposer-fee-and-pay}
     totp_secret: ${S2S_SECRET_DISPOSER_FEE_AND_PAY:AAAAAAAAAAAAAAAA}
     url: ${S2S_URL:http://localhost:4502}
-    endpoint-regex: (/internal/searchCases/getClosedCases.*|/refunds/ccd_case_reference/.*|/ccd_case_reference/.*|/payments/ccd_case_reference/.*)
+    endpoint-regex: (/internal/searchCases/getClosedCases.*|/cases/.*/refunds|/cases/.*/bulk-scan-payments|/cases/.*/payments)
   legacy:
     password-grant:
       registration-reference: ccd-data-store

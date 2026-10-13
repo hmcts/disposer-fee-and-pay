@@ -47,7 +47,7 @@ class PaymentsClientTest {
     private feign.FeignException feignException(int status) {
         Request request = Request.create(
             Request.HttpMethod.DELETE,
-            "/payments/ccd_case_reference/CASE-1",
+            "/cases/CASE-1/payments",
             Map.of(),
             null,
             StandardCharsets.UTF_8,

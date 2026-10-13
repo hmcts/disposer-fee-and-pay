@@ -134,9 +134,9 @@ If the manual disposer is triggered twice and the disposer has already processed
 
 After retrieving eligible closed case IDs from CCD, the disposer deletes Fee & Pay records by CCD case number, in LLD order:
 
-1. Refunds API — `DELETE /refunds/ccd_case_reference/{ccd-case-number}`
-2. Bulk Scanning API — `DELETE /ccd_case_reference/{ccd-case-number}`
-3. Payments API — `DELETE /payments/ccd_case_reference/{ccd-case-number}`
+1. Refunds API — `DELETE /cases/{ccd-case-number}/refunds`
+2. Bulk Scanning API — `DELETE /cases/{ccd-case-number}/bulk-scan-payments`
+3. Payments API — `DELETE /cases/{ccd-case-number}/payments`
 
 Refunds API removes associated notifications. Payment API deletes Digital BAR data. The disposer does not call Notifications or BAR.
 
