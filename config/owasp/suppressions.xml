@@ -8,5 +8,13 @@
     <cve>CVE-2026-54515</cve>
     <cve>CVE-2026-59284</cve>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+      False positive: CVE-2025-21199 affects Microsoft Azure Agent for Backup/Site Recovery
+      installers, not Application Insights Java (applicationinsights-core).
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/com\.microsoft\.azure/applicationinsights-core@.*$</packageUrl>
+    <cve>CVE-2025-21199</cve>
+  </suppress>
   <!--End of false positives section -->
 </suppressions>

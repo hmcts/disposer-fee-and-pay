@@ -6,10 +6,11 @@ job:
   startingDeadlineSeconds: 600
   concurrencyPolicy: Forbid
   aadIdentityName: disposer
-#  Uncomment once the vault containing the app insights key has been set up
   keyVaults:
     disposer:
       secrets:
+      - name: app-insights-connection-string
+        alias: app-insights-connection-string
       - name: s2s-secret-disposer-fee-and-pay
         alias: S2S_SECRET_DISPOSER_FEE_AND_PAY
       - name: disposer-fee-and-pay-client-secret
@@ -18,12 +19,13 @@ job:
         alias: DISPOSER_SYSTEM_USER
       - name: disposer-fee-and-pay-system-user-password
         alias: DISPOSER_SYSTEM_USER_PASSWORD
-#        - name: AppInsightsInstrumentationKey
-#          alias: azure.application-insights.instrumentation-key
   environment:
     S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
     IDAM_API_URL: https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net
     CCD_DATA_STORE_URL: http://ccd-data-store-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+    PAYMENTS_URL: http://payment-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+    REFUNDS_URL: http://ccpay-refunds-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+    BULK_SCANNING_URL: http://ccpay-bulkscanning-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
 
 global:
   jobKind: CronJob
