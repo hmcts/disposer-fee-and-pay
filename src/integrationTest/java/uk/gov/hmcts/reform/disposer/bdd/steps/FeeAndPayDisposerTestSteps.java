@@ -23,6 +23,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import uk.gov.hmcts.reform.disposer.domain.DisposalRunResult;
+import uk.gov.hmcts.reform.disposer.exception.PersistentDeletionException;
 import uk.gov.hmcts.reform.disposer.service.PaymentDisposerService;
 
 import java.time.LocalDate;
@@ -45,11 +46,13 @@ public class FeeAndPayDisposerTestSteps {
     private int ttlYears;
 
     private DisposalRunResult disposalRunResult;
+    private PersistentDeletionException disposalRunException;
 
     @Before
     public void resetWireMock() {
         wireMockServer.resetAll();
         disposalRunResult = null;
+        disposalRunException = null;
     }
 
     @Given("CCD returns closed cases for the eligible date")
@@ -108,7 +111,12 @@ public class FeeAndPayDisposerTestSteps {
 
     @When("the payment disposer runs")
     public void thePaymentDisposerRuns() {
-        disposalRunResult = paymentDisposerService.processClosedCases();
+        try {
+            disposalRunResult = paymentDisposerService.processClosedCases();
+        } catch (PersistentDeletionException exception) {
+            disposalRunException = exception;
+            disposalRunResult = exception.getResult();
+        }
     }
 
     @Then("the closed case references are returned")
@@ -121,12 +129,14 @@ public class FeeAndPayDisposerTestSteps {
 
     @Then("no closed case references are returned")
     public void noClosedCaseReferencesAreReturned() {
+        assertThat(disposalRunException).isNull();
         assertThat(disposalRunResult.successes()).isEmpty();
         assertThat(disposalRunResult.failures()).isEmpty();
     }
 
     @Then("all payment deletions succeed")
     public void allPaymentDeletionsSucceed() {
+        assertThat(disposalRunException).isNull();
         assertThat(disposalRunResult.status()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(disposalRunResult.failures()).isEmpty();
         assertThat(disposalRunResult.successes()).hasSize(6);
@@ -134,6 +144,7 @@ public class FeeAndPayDisposerTestSteps {
 
     @Then("the disposer reports a multi-status partial success")
     public void theDisposerReportsAMultiStatusPartialSuccess() {
+        assertThat(disposalRunException).isNotNull();
         assertThat(disposalRunResult.status()).isEqualTo(HttpStatus.MULTI_STATUS);
         assertThat(disposalRunResult.successes()).hasSize(5);
         assertThat(disposalRunResult.failures()).hasSize(1);
@@ -150,14 +161,22 @@ public class FeeAndPayDisposerTestSteps {
         );
     }
 
-    @And("Fee and Pay delete endpoints were called")
-    public void feeAndPayDeleteEndpointsWereCalled() {
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(refundsPath("1111111111111111"))));
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(refundsPath("2222222222222222"))));
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(bulkScanPath("1111111111111111"))));
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(bulkScanPath("2222222222222222"))));
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(paymentsPath("1111111111111111"))));
-        wireMockServer.verify(deleteRequestedFor(urlEqualTo(paymentsPath("2222222222222222"))));
+    @And("Fee and Pay delete endpoints were called with user and service authorization headers")
+    public void feeAndPayDeleteEndpointsWereCalledWithUserAndServiceAuthorizationHeaders() {
+        verifyAuthorizedDelete(refundsPath("1111111111111111"));
+        verifyAuthorizedDelete(refundsPath("2222222222222222"));
+        verifyAuthorizedDelete(bulkScanPath("1111111111111111"));
+        verifyAuthorizedDelete(bulkScanPath("2222222222222222"));
+        verifyAuthorizedDelete(paymentsPath("1111111111111111"));
+        verifyAuthorizedDelete(paymentsPath("2222222222222222"));
+    }
+
+    private void verifyAuthorizedDelete(String path) {
+        wireMockServer.verify(
+            deleteRequestedFor(urlEqualTo(path))
+                .withHeader(HttpHeaders.AUTHORIZATION, equalTo(BEARER_USER_TOKEN))
+                .withHeader("ServiceAuthorization", equalTo(BEARER_SERVICE_TOKEN))
+        );
     }
 
     private void stubFeeAndPayDeletes(String caseReference, int paymentDeleteStatus) {

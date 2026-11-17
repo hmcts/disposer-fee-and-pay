@@ -8,6 +8,7 @@ import uk.gov.hmcts.reform.disposer.client.ccd.CcdDataStoreClient;
 import uk.gov.hmcts.reform.disposer.domain.DisposalRunResult;
 import uk.gov.hmcts.reform.disposer.domain.PaymentDeletionResult;
 import uk.gov.hmcts.reform.disposer.exception.CcdDataStoreClientException;
+import uk.gov.hmcts.reform.disposer.exception.PersistentDeletionException;
 import uk.gov.hmcts.reform.disposer.monitoring.ProcessEventTracker;
 import uk.gov.hmcts.reform.disposer.monitoring.ProcessMonitorDto;
 
@@ -44,6 +45,9 @@ public class PaymentDisposerService {
 
             DisposalRunResult result = feeAndPayDeletionService.deletePaymentsForCases(caseReferences);
             completeProcess(process, result);
+            if (result.hasPersistentFailures()) {
+                throw new PersistentDeletionException(failureDetail(result.failures()), result);
+            }
             return result;
         } catch (CcdDataStoreClientException exception) {
             log.error("Failed to retrieve eligible case references from CCD. Skipping processing.", exception);

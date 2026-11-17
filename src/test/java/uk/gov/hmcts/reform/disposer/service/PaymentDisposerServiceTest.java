@@ -23,6 +23,7 @@ import uk.gov.hmcts.reform.disposer.client.ccd.CcdDataStoreClient;
 import uk.gov.hmcts.reform.disposer.domain.DisposalRunResult;
 import uk.gov.hmcts.reform.disposer.domain.PaymentDeletionResult;
 import uk.gov.hmcts.reform.disposer.exception.CcdDataStoreClientException;
+import uk.gov.hmcts.reform.disposer.exception.PersistentDeletionException;
 import uk.gov.hmcts.reform.disposer.monitoring.ProcessEventTracker;
 import uk.gov.hmcts.reform.disposer.monitoring.ProcessMonitorDto;
 
@@ -67,10 +68,13 @@ class PaymentDisposerServiceTest {
         when(ccdDataStoreClient.getClosedCases(expectedDate)).thenReturn(cases);
         when(feeAndPayDeletionService.deletePaymentsForCases(cases)).thenReturn(runResult);
 
-        DisposalRunResult result = paymentDisposerService.processClosedCases();
+        assertThatExceptionOfType(PersistentDeletionException.class)
+            .isThrownBy(() -> paymentDisposerService.processClosedCases())
+            .satisfies(exception -> {
+                assertThat(exception.getResult()).isEqualTo(runResult);
+                assertThat(exception.getResult().status()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+            });
 
-        assertThat(result).isEqualTo(runResult);
-        assertThat(result.status()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         ArgumentCaptor<LocalDate> dateCaptor = ArgumentCaptor.forClass(LocalDate.class);
         verify(ccdDataStoreClient).getClosedCases(dateCaptor.capture());
         assertThat(dateCaptor.getValue()).isEqualTo(expectedDate);
@@ -90,7 +94,9 @@ class PaymentDisposerServiceTest {
         when(ccdDataStoreClient.getClosedCases(expectedDate)).thenReturn(cases);
         when(feeAndPayDeletionService.deletePaymentsForCases(cases)).thenReturn(runResult);
 
-        paymentDisposerService.processClosedCases();
+        assertThatExceptionOfType(PersistentDeletionException.class)
+            .isThrownBy(() -> paymentDisposerService.processClosedCases())
+            .satisfies(exception -> assertThat(exception.getResult()).isEqualTo(runResult));
 
         assertThat(completedProcess().getEndStatus()).isEqualTo(PARTIAL_SUCCESS);
     }

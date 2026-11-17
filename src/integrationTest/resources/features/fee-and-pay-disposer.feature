@@ -10,7 +10,7 @@ Feature: Fee and Pay disposer
     Then the closed case references are returned
     And all payment deletions succeed
     And CCD was called with user and service authorization headers
-    And Fee and Pay delete endpoints were called
+    And Fee and Pay delete endpoints were called with user and service authorization headers
 
   Scenario: Retrieve empty list when CCD has no closed cases
     Given CCD returns not found for the eligible date
