@@ -60,6 +60,9 @@ withPipeline(type, product, component) {
     env.S2S_URL = 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
     env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'
     env.CCD_DATA_STORE_URL = 'http://ccd-data-store-api-aat.service.core-compute-aat.internal'
+    env.PAYMENTS_URL = 'http://payment-api-aat.service.core-compute-aat.internal'
+    env.REFUNDS_URL = 'http://ccpay-refunds-api-aat.service.core-compute-aat.internal'
+    env.BULK_SCANNING_URL = 'http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal'
 
     echo "Just waiting a while to ensure that the pod has run the job"
     sh "sleep 60s"
