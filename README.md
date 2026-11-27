@@ -82,7 +82,54 @@ docker image rm <image-id>
 
 There is no need to remove postgres and java or similar core images.
 
+## Operational runbook
+
+### Daily schedule
+
+The service is deployed as a Kubernetes CronJob. The default chart schedule is daily:
+
+```yaml
+job:
+  schedule: "0 22 * * *"
+  concurrencyPolicy: Forbid
+```
+
+AAT and production schedules are configured in `cnp-flux-config`:
+
+- `apps/disposer/disposer-fee-and-pay/aat.yaml`
+- `apps/disposer/disposer-fee-and-pay/prod.yaml`
+
+`concurrencyPolicy: Forbid` prevents overlapping scheduled runs from the CronJob controller.
+
+### DISPOSER_FEE_PAY_ENABLED
+
+The disposer is set to false by default in application.yaml.
+
+```yaml
+service:
+  enabled: ${DISPOSER_FEE_PAY_ENABLED:false}
+```
+
+### Manual run
+
+```bash
+./bin/manual-run-disposer.sh
+```
+
+The script defaults to:
+
+- namespace: `disposer`
+- CronJob: `disposer-fee-and-pay-job`
+
+Override those values when needed:
+
+```bash
+NAMESPACE=disposer CRONJOB=disposer-fee-and-pay ./bin/manual-run-disposer.sh
+```
+The script creates a Job from the CronJob only when no active `disposer-fee-and-pay` job is already running. 
+If an active job exists it logs a blocked manual run message and exits without creating another job.
+If the manual disposer is triggered twice and the disposer has already processed historical cases then the system will skip already-deleted cases and logs this as a non-action.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-
